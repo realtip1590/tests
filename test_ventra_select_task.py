@@ -1,0 +1,55 @@
+# Тест выбора задания для выполнения
+
+import re
+from playwright.sync_api import Page, expect
+
+
+def test_example(page: Page) -> None:
+    page.goto("https://ventrago.ru/")
+    page.get_by_role("button", name="Войти").click()
+    page.get_by_role("button", name="Вход").click()
+    page.locator("input[type=\"tel\"]").click()
+    page.locator("input[type=\"tel\"]").fill("+7 (923) 769-8800")
+    page.get_by_role("group").filter(has_text="Нажимая на кнопку, вы даете согласие на обработку персональных данных").locator("span").click()
+    page.get_by_role("group").filter(has_text="Я ознакомлен(-а) с правилами сервиса").locator("span").click()
+    page.get_by_role("button", name="Далее").click()
+    page.locator("input[type=\"tel\"]").click()
+
+# На тестовой среде необходимо задать переменную с кодом для авторизации
+
+    page.locator("input[type=\"tel\"]").fill("423273")
+    page.get_by_role("button", name="Подтвердить").click()
+    expect(page.get_by_role("link", name="Все задания здесь Берите задания и получайте оплату К списку заданий")).to_be_visible()
+    page.get_by_role("link", name="Все задания здесь Берите задания и получайте оплату К списку заданий").click()
+    expect(page.locator("section").get_by_role("link", name="Все задания")).to_be_visible()
+    expect(page.locator("h1")).to_be_visible()
+    expect(page.locator(".map-button-container")).to_be_visible()
+    page.get_by_text("Рядом с метро").click()
+    page.get_by_role("textbox", name="Станция метро").click()
+    page.get_by_role("textbox", name="Станция метро").fill("киевская")
+    expect(page.get_by_text("Киевская")).to_be_visible()
+    page.get_by_text("Киевская").click()
+    expect(page.get_by_role("textbox", name="Киевская")).to_be_visible()
+    page.get_by_role("group").filter(has_text="Работник торгового зала (2)").locator("span").first.click()
+    expect(page.get_by_role("button", name="Выбрать дату").first).to_be_visible()
+    expect(page.get_by_role("link", name="Подробнее").nth(1)).to_be_visible()
+    page.get_by_role("link", name="Подробнее").nth(1).click()
+    expect(page.locator("#taskPageTitle svg")).to_be_visible()
+    expect(page.get_by_role("button", name="Выбрать дату задания")).to_be_visible()
+    expect(page.get_by_role("heading", name="Какие документы нужны")).to_be_visible()
+    expect(page.get_by_role("heading", name="Как взять задание")).to_be_visible()
+    expect(page.get_by_role("heading", name="Оставить заявку на задание")).to_be_visible()
+    expect(page.locator("#place-order")).to_be_visible()
+    expect(page.get_by_role("button", name="Отправить заявку")).to_be_visible()
+    expect(page.get_by_role("button", name="Выбрать дату задания")).to_be_visible()
+    page.get_by_role("button", name="Выбрать дату задания").click()
+    expect(page.locator("#taskPageTitle div").filter(has_text="Сканируйте QR").nth(2)).to_be_visible()
+    expect(page.get_by_role("button", name="Взять в работу")).to_be_visible()
+    expect(page.locator("#taskPageTitle svg").first).to_be_visible()
+    page.get_by_role("button", name="Взять в работу").click()
+    expect(page.get_by_role("heading", name="Вы записываетесь на подработку")).to_be_visible()
+    expect(page.locator("#taskPageTitle")).to_contain_text("Теперь нужно загрузить документы. Ваши данные будут защищены законом \"О персональных данных\" №152-ФЗ РФ")
+    expect(page.get_by_text("Подготовьте медкнижку")).to_be_visible()
+    expect(page.get_by_role("button", name="Загрузить паспорт")).to_be_visible()
+    expect(page.get_by_role("link", name="Загрузить медкнижку")).to_be_visible()
+    expect(page.locator("#taskPageTitle path").first).to_be_visible()
